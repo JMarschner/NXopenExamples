@@ -4,8 +4,7 @@
 ## Grundinstallation
  1. VSCode (https://code.visualstudio.com/) installieren
  2. .Net installieren (https://dotnet.microsoft.com/)
- 3. Repository clonen/herunterladen und entpacken oder
-    Alterenativ ein eigenes Projekt erstellen. (Anleitung im nachfolgenden Punkt beschieben)
+ 3. Repository clonen/herunterladen und entpacken oder alterenativ ein eigenes Projekt erstellen. (Anleitung im nachfolgenden Punkt beschieben)
 
 ### Ein eigenes NXOpen-Projekt in VSCode anlegen
  1. Mittels "dotnet new console" ein neues Projekt anlegen.
