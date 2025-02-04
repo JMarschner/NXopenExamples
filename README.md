@@ -13,4 +13,15 @@ Diverse NXopen- bzw. Journal-Beispiele (c# und vba) für die Anpassung und Erwei
 
 ## Scripte/Journale
 ### ODBC (ODBC/ODBCTest.cs)
-Ein Journal um eine grundlegende Verbindung zu einer Datenbank herzustellen. Die Verbindung erfolgt über die ODBC-Schnittstelle und ein entsprechender Datenbanktreiber wird vorausgesetzt bzw. muss auf dem ausführenden System installiert sein. Das Journal kann zum Beispiel dafür verwendet werden um Stücklisten, Teiledaten, Materialien oder anderes mit einer Datenbank zu synchronisieren. Auch die Synchronisation zwischen Siemens NX und PDM/MES/ERP ist hiermit möglich. Das Journal muss jedoch noch um die eigentliche Programmlogik erweitert werden.
+Ein Journal um eine grundlegende Verbindung zu einer Datenbank herzustellen. Die Verbindung erfolgt über die ODBC-Schnittstelle und ein entsprechender Datenbanktreiber wird vorausgesetzt bzw. muss auf dem ausführenden System installiert sein. 
+
+Das Journal kann zum Beispiel dafür verwendet werden um Stücklisten, Teiledaten, Materialien oder anderes mit einer Datenbank zu synchronisieren. Auch die Synchronisation zwischen Siemens NX und PDM/MES/ERP ist hiermit möglich. Das Journal muss jedoch noch um die eigentliche Programmlogik erweitert werden.
+
+### createAssoziativAttributes
+Die nachfolgenden Journale können z.B. dafür genutzt werden um Projektinformationen in Unterbaugruppen oder Einzelteilen verfügbar zu machen. Mit den Ausdrücken lassen sich dann assoziative Formelemente aufbauen (z.B. Teilebeschriftungen/Kennzeichnungen oder ähnliches).
+
+#### createAssoziativAttributes/linkOtherAttributes.cs
+Dieses Journal durchsucht alle geöffneten Teile nach einem bestimmten Attribut (z.B. nach "UM_TOP", der obersten Baugruppe eines Moldwizard-Projekts).
+
+In diesem Bauteil werden dann assoziative Ausdrucke erstellt, welche auf die anzugebenden Teileattribute verweisen (z.B. "UM_PROJECT", der Projektnummer eines Moldwizard-Projekts). Die so erstellten Ausdrücke werden dann assoziativ in das aktuell aktive Bauteil gelinkt.
+
