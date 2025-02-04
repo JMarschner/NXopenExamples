@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.14</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.Odbc">
+      <Version>7.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="NXOpen">
       <HintPath>$(UGII_BASE_DIR)\nxbin\managed\NXOpen.dll</HintPath>
     </Reference>
