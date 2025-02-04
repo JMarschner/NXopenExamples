@@ -26,7 +26,7 @@ namespace NXToolsJoergMarschner
         private static string[] attributesToLink = {"UM_PROJECT", "CUSTOMER", "DESIGNER"};
 
         private static NXOpen.Session theSession;
-        public static NXOpen.ListingWindow theLW;
+        // public static NXOpen.ListingWindow theLW;
 
         private static NXOpen.Part workPart;
         // private static NXOpen.Part displayPart;
@@ -42,7 +42,7 @@ namespace NXToolsJoergMarschner
         {
             try {
                 theSession = NXOpen.Session.GetSession();
-                theLW = theSession.ListingWindow;
+                // theLW = theSession.ListingWindow;
 
                 workPart = theSession.Parts.Work;
                 // displayPart = theSession.Parts.Display;
