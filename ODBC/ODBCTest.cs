@@ -1,7 +1,11 @@
 ﻿/* ODBCTest.cs
  * 
- * Ein Beispiel welches demonstriert wie eine Datenbankverbindung mittels ODBC aufgebaut wird.
- * Das Journal kann z.B. für die Synchronisierung zwischen NX und einem PDM/MES/ERP-System genutzt werden.
+ * Ein Journal um eine grundlegende Verbindung zu einer Datenbank herzustellen. Die Verbindung erfolgt über die
+ * ODBC-Schnittstelle und ein entsprechender Datenbanktreiber wird vorausgesetzt bzw. muss auf dem ausführenden 
+ * System installiert sein. Das Journal kann zum Beispiel dafür verwendet werden um Stücklisten, Teiledaten, 
+ * Materialien oder anderes mit einer Datenbank zu synchronisieren. Auch die Synchronisation zwischen Siemens NX 
+ * und PDM/MES/ERP ist hiermit möglich. Das Journal muss jedoch noch um die eigentliche Programmlogik erweitert
+ * werden.
  *
  */
 
