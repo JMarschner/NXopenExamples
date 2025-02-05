@@ -1,4 +1,4 @@
-/* CreateDWGNote.cs
+/* createDrawingNotes.cs
  * 
  * Makro zum erstellen von assoziativen Texthinweisen auf den Zeichnungen.
  * 
