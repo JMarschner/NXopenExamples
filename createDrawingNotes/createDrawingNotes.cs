@@ -1,6 +1,11 @@
 /* createDrawingNotes.cs
  * 
- * Makro zum erstellen von assoziativen Texthinweisen auf den Zeichnungen.
+ * Ein Journal welches assoziative Texthinweise auf einer Zeichnung hinzufügt. Die Hinweise werden dabei immer im jeweiligen 
+ * Einzelteil als Teileattribut hinterlegt. Diese Attribute können z.B. über die Stücklistenfunktion oder eine Datenbankverbindung 
+ * bearbeitet werden.
+ *
+ * Beim Verwenden der Funktion muss die Komponente, von welcher die Attribute verwendet werden sollen und die Ansicht, an die die
+ * Informationen geheftet werden sollen, ausgewählt werden. 
  * 
  */
 
@@ -34,7 +39,6 @@ public class CreateDrawingNotes {
 
             theUI = UI.GetUI();
             theUfSession = UFSession.GetUFSession();
-            
         } catch (NXOpen.NXException ex) {
             UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, ex.Message);
             return;
@@ -49,12 +53,14 @@ public class CreateDrawingNotes {
 
         // ----------------------------------------------
         //  Eine Komponente & eine Ansicht auswählen
-        // ----------------------------------------------        
-        NXObject component = (NXObject) selectComponent();
-        NXOpen.Drawings.DraftingView view = (NXOpen.Drawings.DraftingView) selectView();
-
-        if (component==null || view==null) {
-            UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, "Fehler bei der Auswahl. NULL-Pointer");
+        // ----------------------------------------------
+        NXObject component;
+        NXOpen.Drawings.DraftingView view;
+        try {
+            component = (NXObject) selectComponent();
+            view = (NXOpen.Drawings.DraftingView) selectView();
+        } catch (Exception ex) {
+            UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, ex.Message);
             return;
         }
 
@@ -63,7 +69,7 @@ public class CreateDrawingNotes {
         //  Den Texthinweis erstellen und ablegen
         // ----------------------------------------------
         try {
-            setNote(component, view);
+            createNote(component, view);
         } catch (NXOpen.NXException ex) {
             UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, ex.Message);
             theSession.UndoToMark(markId1,"CreateDrawingNotes");
@@ -101,9 +107,13 @@ public class CreateDrawingNotes {
             return tagobj;
         }
         
-        return null;
+        throw new Exception("Keine Komponente ausgewählt oder Auswahl fehlerhaft.");
     }
 
+
+    //------------------------------------------------------------------------------
+    //  Eine Zeichnungsansicht auswählen
+    //------------------------------------------------------------------------------
     public static TaggedObject selectView() {
         theUfSession.Ui.SetCursorView(0); // Für das auswählen innerhalb einer Zeichnung notwendig
 
@@ -130,22 +140,20 @@ public class CreateDrawingNotes {
             return tagobj;
         }
 
-        return null;
+        throw new Exception("Keine Ansicht ausgewählt oder Auswahl fehlerhaft.");
     }
+
 
     //------------------------------------------------------------------------------
     //  Den Texthinweis erstellen
     //------------------------------------------------------------------------------
-    public static void setNote(NXObject component, NXOpen.Drawings.DraftingView view) {
+    public static void createNote(NXObject component, NXOpen.Drawings.DraftingView view) {
         // ----------------------------------------------
         //  Note-Builder erstellen
         // ----------------------------------------------
         NXOpen.Annotations.DraftingNoteBuilder draftingNoteBuilder1;
-        NXOpen.Annotations.DraftingNoteBuilder draftingNoteBuilder2;
 
-        NXOpen.Annotations.SimpleDraftingAid nullNXOpen_Annotations_SimpleDraftingAid = null;
-        
-        draftingNoteBuilder1 = workPart.Annotations.CreateDraftingNoteBuilder(nullNXOpen_Annotations_SimpleDraftingAid);
+        draftingNoteBuilder1 = workPart.Annotations.CreateDraftingNoteBuilder(null);
         draftingNoteBuilder1.Origin.Anchor = NXOpen.Annotations.OriginBuilder.AlignmentPosition.BottomCenter;
 
         // ----------------------------------------------
@@ -161,10 +169,10 @@ public class CreateDrawingNotes {
 
         draftingNoteBuilder1.Text.TextBlock.SetText(text1);
 
+
         // ----------------------------------------------
         //  Attribute dem Text hinzufügen
         // ----------------------------------------------
-
         try {
             AddPartAttributeToText(draftingNoteBuilder1, component, "PART_NAME", 1, 25);
             AddPartAttributeToText(draftingNoteBuilder1, component, "NUMBER", 1, 22);
@@ -194,7 +202,6 @@ public class CreateDrawingNotes {
          * [3] - Y max
          */
         NXOpen.Point3d point1 = new NXOpen.Point3d((viewBorder[0]+viewBorder[2])/2, viewBorder[3]+10, 0.0);
-        //NXOpen.Point3d point1 = new NXOpen.Point3d((viewBorder[0]+viewBorder[2])/2, viewBorder[3]+30, 0.0);
         draftingNoteBuilder1.Origin.Origin.SetValue(null, view, point1);
 
 
@@ -208,7 +215,6 @@ public class CreateDrawingNotes {
         // ----------------------------------------------
         //  Text zentrieren
         // ----------------------------------------------
-
         NXOpen.DisplayableObject[] dispOjects1 = new NXOpen.DisplayableObject[1];
         dispOjects1[0] = note1;
 
@@ -219,10 +225,10 @@ public class CreateDrawingNotes {
         editSettingsBuilder1.Destroy();
     }
 
+
     //------------------------------------------------------------------------------
     //  Attribute prüfen, ggf. erstellen und dem Text hinzufügen...
     //------------------------------------------------------------------------------
-   
     public static void AddPartAttributeToText(NXOpen.Annotations.DraftingNoteBuilder draftingNoteBuilder1, NXObject component, string attributename, int line, int cursorPos) {
         try {
             component.GetUserAttributeAsString(attributename, NXObject.AttributeType.Any, -1);
@@ -246,6 +252,7 @@ public class CreateDrawingNotes {
         }
         draftingNoteBuilder1.Text.TextBlock.AddAttributeReference(component, attributename, false, line, cursorPos);
     }
+
 
     //------------------------------------------------------------------------------
     //  Unload-Fuktion, wird von NX automatisch aufgerufen
