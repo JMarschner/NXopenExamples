@@ -18,6 +18,12 @@ Ein Journal um eine grundlegende Verbindung zu einer Datenbank herzustellen. Die
 
 Das Journal kann zum Beispiel dafür verwendet werden um Stücklisten, Teiledaten, Materialien oder anderes mit einer Datenbank zu synchronisieren. Auch die Synchronisation zwischen Siemens NX und PDM/MES/ERP ist hiermit möglich. Das Journal muss jedoch noch um die eigentliche Programmlogik erweitert werden.
 
+### Erstellen von assoziativen Texthinweisen auf Zeichnungen
+#### (createAssoziativAttributes/createDrawingNotes.cs)
+Ein Journal welches assoziative Texthinweise auf einer Zeichnung hinzufügt. Die Hinweise werden dabei immer im jeweiligen Einzelteil als Teileattribut hinterlegt. Diese Attribute können z.B. über die Stücklistenfunktion oder eine Datenbankverbindung bearbeitet werden.
+
+Beim Verwenden der Funktion muss die Komponente, von welcher die Attribute verwendet werden sollen und die Ansicht, an die die Informationen geheftet werden sollen, ausgewählt werden. 
+
 ### Erstellen von assoziativen Attributen und teileübergreifender Ausdrücken
 Die nachfolgenden Journale können z.B. dafür genutzt werden um Projektinformationen in Unterbaugruppen oder Einzelteilen verfügbar zu machen. Mit den Ausdrücken lassen sich dann assoziative Formelemente aufbauen (z.B. Teilebeschriftungen/Kennzeichnungen oder ähnliches).
 
