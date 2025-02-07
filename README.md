@@ -18,6 +18,10 @@ Ein Journal um eine grundlegende Verbindung zu einer Datenbank herzustellen. Die
 
 Das Journal kann zum Beispiel dafür verwendet werden um Stücklisten, Teiledaten, Materialien oder anderes mit einer Datenbank zu synchronisieren. Auch die Synchronisation zwischen Siemens NX und PDM/MES/ERP ist hiermit möglich. Das Journal muss jedoch noch um die eigentliche Programmlogik erweitert werden.
 
+### Erstellen von Faltmarkierungen nach DIN 824
+#### (createFoldingMarks/createFoldingMarks.cs)
+Dieses Journal fügt einem Zeichnungsblatt eine Skizze mit Faltmarkierungen gemäß DIN 824 hinzu.
+
 ### Erstellen von assoziativen Texthinweisen auf Zeichnungen
 #### (createDrawingNotes/createDrawingNotes.cs)
 Ein Journal welches assoziative Texthinweise auf einer Zeichnung hinzufügt. Die Hinweise werden dabei immer im jeweiligen Einzelteil als Teileattribut hinterlegt. Diese Attribute können z.B. über die Stücklistenfunktion oder eine Datenbankverbindung bearbeitet werden.
