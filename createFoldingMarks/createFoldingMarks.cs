@@ -1,6 +1,6 @@
 /* createFoldingMarks.cs
  * 
- * 
+ * Dieses Journal fügt einem Zeichnungsblatt eine Skizze mit Faltmarkierungen gemäß DIN 824 hinzu.
  * 
  */
 
@@ -15,7 +15,7 @@ namespace NXToolsJoergMarschner
     internal class createFoldingMarks
     {
         private static NXOpen.Session theSession;
-        public static NXOpen.ListingWindow theLW;
+        // public static NXOpen.ListingWindow theLW;
 
         private static NXOpen.Part workPart;
         // private static NXOpen.Part displayPart;
@@ -31,7 +31,7 @@ namespace NXToolsJoergMarschner
         {
             try {
                 theSession = NXOpen.Session.GetSession();
-                theLW = theSession.ListingWindow;
+                // theLW = theSession.ListingWindow;
 
                 workPart = theSession.Parts.Work;
                 // displayPart = theSession.Parts.Display;
@@ -49,6 +49,10 @@ namespace NXToolsJoergMarschner
             // ----------------------------------------------
             Session.UndoMarkId undoMarkId = theSession.SetUndoMark(NXOpen.Session.MarkVisibility.Visible, "CreateAssoziativAttributes");
 
+
+            // ----------------------------------------------
+            //  Diverse Variablen des aktuellen Zeichnungsblatts holen
+            // ----------------------------------------------
             NXOpen.Drawings.DrawingSheet currentDrawing = workPart.DrawingSheets.CurrentDrawingSheet;
             if (currentDrawing == null) {
                 UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, "Aktuell ist kein Zeichnungsblatt geöffnet.");
@@ -58,10 +62,28 @@ namespace NXToolsJoergMarschner
             double SheetLength = currentDrawing.Length;
             double SheetHeight = currentDrawing.Height;
 
-            currentDrawing.ActivateForSketching();
-
-            // NXOpen.Sketch[] sketches = currentDrawing.GetDraftingSketches();
             
+            // ----------------------------------------------
+            //  Zeichnungsblatt für Skizzierung aktivieren und ggf. alte Markierungen löschen
+            // ----------------------------------------------
+            try {
+                currentDrawing.ActivateForSketching();
+                NXOpen.Sketch[] sketches = currentDrawing.GetDraftingSketches();
+
+                foreach (NXOpen.Sketch oldSketch in sketches) {
+                    if (oldSketch.Name.StartsWith("FOLDINGMARKS")) {
+                        theSession.UpdateManager.AddToDeleteList((NXOpen.TaggedObject) oldSketch);
+                    }
+                }
+            } catch (NXException ex) {
+                UI.GetUI().NXMessageBox.Show("Error / Fehler", NXMessageBox.DialogType.Error, ex.Message);
+                return;
+            }
+            
+
+            // ----------------------------------------------
+            //  Skizze und Markierungen erstellen
+            // ----------------------------------------------
             SketchInDraftingBuilder sketchInDraftingBuilder = workPart.Sketches.CreateSketchInDraftingBuilder();
             
             NXOpen.Sketch sketch = (NXOpen.Sketch) sketchInDraftingBuilder.Commit();
@@ -89,7 +111,7 @@ namespace NXToolsJoergMarschner
             }
             
 
-            // Lochmarkierung >= A4 hinzufügen
+            // Markierung für Locher >= A4 hinzufügen
             if (SheetHeight >= 297) {
                 NXOpen.Point3d[] pt = new Point3d[2];
                 pt[0] = new Point3d(1,  297/2, 0);
@@ -120,10 +142,8 @@ namespace NXToolsJoergMarschner
 
             // Faltmarken X erstellen
             double[] faltungen;
-            if (SheetLength <= 210) { // A4 Hochformat oder kleiner
+            if (SheetLength <= 297) { // A4 Quer oder kleiner
                 faltungen = new double[] {};
-            } else if (SheetLength == 297) { // A4 Quer
-                faltungen = new double[] {20, 125, 230};
             } else if (SheetLength == 420) { // A3
                 faltungen = new double[] {20, 125, 230};
             }else if (SheetLength == 594) { // A2
@@ -173,16 +193,16 @@ namespace NXToolsJoergMarschner
 
             // Skizze/Zeichnung updaten
             sketch.Update();
-            // sketch.UpdateNavigator(); // NX2406
+            // sketch.UpdateNavigator(); // Erst ab NX2406
             sketch.Deactivate(Sketch.ViewReorient.False, Sketch.UpdateLevel.SketchOnly);
-            sketch.SetName("FoldingMarks");
+            sketch.SetName("FoldingMarks " + System.Guid.NewGuid());
 
-            // Skizze rot einfärben und Linienstärke anpassen
+            // Skizze einfärben und Linienstärke anpassen
             NXOpen.DisplayModification displayModification = theSession.DisplayManager.NewDisplayModification();
             
             displayModification.ApplyToAllFaces = true;
             displayModification.ApplyToOwningParts = false;
-            // displayModification.EndPointDisplayState = false; // NX2412
+            // displayModification.EndPointDisplayState = false; // Erst ab NX2412
             
             displayModification.NewColor = 186;
             displayModification.NewWidth = DisplayableObject.ObjectWidth.Thin;
